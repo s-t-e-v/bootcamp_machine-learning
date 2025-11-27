@@ -100,8 +100,8 @@ H = Matrix(
     ]
 )
 
-I = G * H
-print(f"G * H = {I}")
+Mat = G * H
+print(f"G * H = {repr(Mat)}")
 J = Matrix(
     [
         [1],
@@ -110,14 +110,29 @@ J = Matrix(
     ]
 )
 K = H * J
-print(f"H * J = {K}")
+print(f"H * J = {repr(K)}")
 L = G * J
-print(f"G * J = {L}")
+print(f"G * J = {repr(L)}")
 M = J * G
-print(f"J * G = {M}")
+print(f"J * G = {repr(M)}")
 
-print(f"2 * J = { 2 * J}")
-print(f"J * 2 = { J * 2}")
+print(f"2 * J = {repr(2 * J)}")
+print(f"J * 2 = {repr(J * 2)}")
 
-print(f"2 * G = { 2 * G}")
-print(f"G * 2 = { G * 2}")
+print(f"2 * G = {repr(2 * G)}")
+print(f"G * 2 = {repr(G * 2)}")
+
+va = Vector(
+    [1, 2, 3]
+)
+vb = Vector(
+    [
+        [1],
+        [2],
+        [3]
+    ]
+)
+print(f"H * vb = {repr(H * vb)}")
+print(f"va * H = {repr(va * H)}")
+print(f"va * vb = {repr(va * vb)}")
+print(f"vb * va = {repr(vb * va)}")

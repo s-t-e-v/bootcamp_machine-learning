@@ -1,7 +1,7 @@
 import sys
 
-class Matrix:
 
+class Matrix:
     def __init__(self, arg):
         if isinstance(arg, (int, float)):
             self.shape = arg
@@ -25,7 +25,7 @@ class Matrix:
             self.data = arg
             return
         raise NotImplementedError
-    
+
     # add : only matrices of same dimensions.
     def __add__(self, other):
         if not isinstance(other, Matrix):
@@ -38,7 +38,7 @@ class Matrix:
             else row_a + row_a
             for row_a, row_b in zip(self.data, other.data)
             ])
-        
+
     __radd__ = __add__
 
     # sub : only matrices of same dimensions.
@@ -55,7 +55,7 @@ class Matrix:
             ])
 
     __rsub__ = __sub__
-    
+
     # div : only scalars.
     def __truediv__(self, scalar):
         if not isinstance(scalar, (int, float)):
@@ -68,7 +68,7 @@ class Matrix:
             else row / scalar
             for row in self.data
             ])
-    
+
     def __rtruediv__(self, scalar):
         if not isinstance(scalar, (int, float)):
             raise NotImplementedError
@@ -79,11 +79,17 @@ class Matrix:
             for row in self.data
             ])
 
-    # mul : scalars, vectors and matrices , can have errors with vectors and matrices,
+    # mul : scalars, vectors and matrices , can have errors with vectors
+    # and matrices,
     # returns a Vector if we perform Matrix * Vector mutliplication.
     def __mul__(self, other):
         if isinstance(other, (int, float)):
-            data = [[v * other for v in row] for row in self.data]
+            data = [
+                [v * other for v in row]
+                if isinstance(row, list)
+                else row * other
+                for row in self.data
+                ]
         elif isinstance(other, Matrix):
             if self.shape[1] != other.shape[0]:
                 raise ArithmeticError
@@ -92,8 +98,11 @@ class Matrix:
                 row = self.data if self.shape[0] == 1 else self.data[m]
                 new_row = []
                 for p in range(other.shape[1]):
-                    new_val = sum(val * other.data[n][p] if other.shape[0] > 1 else val * other.data[p] for val, n in zip(row, range(other.shape[0])))
-                    new_row.append(new_val) 
+                    new_val = sum(
+                        val * other.data[n][p]
+                        if other.shape[0] > 1 else val * other.data[p]
+                        for val, n in zip(row, range(other.shape[0])))
+                    new_row.append(new_val)
                 if self.shape[0] > 1:
                     data.append(new_row)
                 else:
@@ -101,27 +110,28 @@ class Matrix:
                     break
         else:
             raise NotImplementedError
-        if Vector.one_dimension(data) and \
-            (isinstance(self, Vector) or isinstance(other, Vector)):
+        if (Vector.one_dimension(data) and
+                (isinstance(self, Vector) or isinstance(other, Vector))):
             return Vector(data)
         return Matrix(data)
 
-        
     __rmul__ = __mul__
-
 
     def T(self):
         if self.shape[1] == 1:
             return Matrix([v[0] for v in self.data])
         if self.shape[0] == 1:
             return Matrix([[v] for v in self.data])
-        return Matrix([[row[i] for row in self.data] for i in range(self.shape[1])])
+        return Matrix(
+            [[row[i] for row in self.data] for i in range(self.shape[1])]
+            )
 
     def __str__(self):
         return f"{self.data}"
-    
+
     def __repr__(self):
         return f"Matrix(data={self.data}, shape={self.shape})"
+
 
 class Vector(Matrix):
     def __init__(self, arg):
@@ -130,7 +140,7 @@ class Vector(Matrix):
         if not Vector.one_dimension(arg):
             raise NotImplementedError
         super().__init__(arg)
-    
+
     def dot(self, v):
         if not isinstance(v, Vector):
             raise NotImplementedError
@@ -139,9 +149,11 @@ class Vector(Matrix):
         if self.shape[0] == 1:
             return sum(va * vb for va, vb in zip(self.data, v.T().data))
         return sum(va * vb for va, vb in zip(self.T().data, v.data))
-    
+
     @staticmethod
     def one_dimension(data):
-        return  all(isinstance(v, (int, float)) for v in data) or \
+        return all(isinstance(v, (int, float)) for v in data) or\
                 all(isinstance(elem, list) and len(elem) == 1 for elem in data)
-    
+
+    def __repr__(self):
+        return f"Vector(data={self.data}, shape={self.shape})"
