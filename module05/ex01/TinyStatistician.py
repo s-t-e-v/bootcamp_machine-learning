@@ -20,7 +20,7 @@ class TinyStatistician:
         length = len(row)
         mid_idx = length // 2
 
-        if length % 2 !=0:
+        if length % 2 != 0:
             return float(row[mid_idx])
         return float(row[mid_idx - 1] + row[mid_idx]) / 2
 
@@ -34,17 +34,15 @@ class TinyStatistician:
         row = np.sort(row)
         length = len(row)
 
-        if length < 2:
-            return None
-        
-        split_idx = length // 2
-        lower_half = row[:split_idx]
-        upper_half = row[split_idx:] if length % 2 == 0\
-                        else row[split_idx + 1:]
-        
-        q1 = TinyStatistician.median(lower_half)
-        q3 = TinyStatistician.median(upper_half)
-        return [float(q1), float(q3)]
+        rank = [float(q / 100 * (length - 1) + 1) for q in [25, 75]]
+        quartiles = [float(row[int(r) - 1])
+                     if r % 1 == 0.0
+                     else float(
+                         row[int(r) - 1] +
+                         (row[int(r)] - row[int(r) - 1]) * (r % 1))
+                     for r in rank]
+
+        return quartiles
 
     @staticmethod
     def validate_input(x):
@@ -54,7 +52,7 @@ class TinyStatistician:
             v = np.array(v)
         if not isinstance(v, np.ndarray):
             return None
-        
+
         is_column_array = (len(v.shape) == 2 and v.shape[1] == 1)
         if not (len(v.shape) == 1 or is_column_array):
             return None
@@ -62,7 +60,10 @@ class TinyStatistician:
         if is_column_array:
             v = v.T[0]
 
-        if not all(np.isreal(v) & ~np.isinf(v) & ~np.isnan(v)):
+        if v.size == 0:
+            return None
+
+        if not np.all(np.isfinite(v)):
             return None
 
         return v.copy()

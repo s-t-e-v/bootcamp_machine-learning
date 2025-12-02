@@ -118,19 +118,19 @@ def test_quartile():
     # Even length
     x2 = [1, 2, 3, 4, 5, 6, 7, 8]
     q = TinyStatistician.quartile(x2)
-    assert q == [2.5, 6.5], f"Even quartile failed: got {q}"
+    assert q == [2.75, 6.25], f"Even quartile failed: got {q}"
     print(f"✓ quartile({x2}) = {q}")
     
     # Odd length
     x3 = [1, 2, 3, 4, 5, 6, 7, 8, 9]
     q = TinyStatistician.quartile(x3)
-    assert q == [2.5, 7.5], f"Odd quartile failed: got {q}"
+    assert q == [3.0, 7.0], f"Odd quartile failed: got {q}"
     print(f"✓ quartile({x3}) = {q}")
     
     # Small array (4 elements)
     x4 = [1, 2, 3, 4]
     q = TinyStatistician.quartile(x4)
-    assert q == [1.5, 3.5], f"4-element quartile failed: got {q}"
+    assert q == [1.75, 3.25], f"4-element quartile failed: got {q}"
     print(f"✓ quartile({x4}) = {q}")
     
     # 5 elements
@@ -145,30 +145,32 @@ def test_quartile():
     assert q == [3.0, 7.0], f"Unsorted quartile failed: got {q}"
     print(f"✓ quartile({x6}) = {q}")
     
+    # Single element (edge case)
+    q = TinyStatistician.quartile([1])
+    assert q == [1.0, 1.0], f"Single element failed: got {q}"
+    print(f"✓ quartile([1]) = {q}")
+    
     # Two elements (edge case)
     x7 = [1, 10]
     q = TinyStatistician.quartile(x7)
-    assert q == [1.0, 10.0], f"2-element quartile failed: got {q}"
+    assert q == [3.25, 7.75], f"2-element quartile failed: got {q}"
     print(f"✓ quartile({x7}) = {q}")
     
     # Negative numbers
     x8 = [-10, -5, 0, 5, 10, 15, 20]
     q = TinyStatistician.quartile(x8)
-    assert q == [-5.0, 10.0], f"Negative quartile failed: got {q}"
+    assert q == [-2.5, 12.5], f"Negative quartile failed: got {q}"
     print(f"✓ quartile({x8}) = {q}")
     
     # Column vector
     x9 = np.array([[1], [2], [3], [4], [5], [6], [7], [8]])
     q = TinyStatistician.quartile(x9)
-    assert q == [2.5, 6.5], f"Column vector quartile failed: got {q}"
+    assert q == [2.75, 6.25], f"Column vector quartile failed: got {q}"
     print(f"✓ quartile(column vector) = {q}")
     
     # Edge cases - should return None
     assert TinyStatistician.quartile([]) is None, "Empty quartile should return None"
     print("✓ quartile([]) = None")
-    
-    assert TinyStatistician.quartile([1]) is None, "Single element should return None"
-    print("✓ quartile([1]) = None")
     
     assert TinyStatistician.quartile(None) is None, "None quartile should return None"
     print("✓ quartile(None) = None")
