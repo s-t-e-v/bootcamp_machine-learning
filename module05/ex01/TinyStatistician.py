@@ -1,5 +1,5 @@
 import numpy as np
-
+import math
 
 class TinyStatistician:
     @staticmethod
@@ -68,6 +68,27 @@ class TinyStatistician:
         return float(
             x[low_idx] + (x[high_idx] - x[low_idx]) * weight
         )
+
+    @staticmethod
+    def var(x):
+        """Computes the sample variance
+        
+        x is assumed to contain every possible value in the population.
+        """
+        row = TinyStatistician.validate_input(x)
+        if row is None:
+            return None
+        mean_value = TinyStatistician.mean(row)
+        length = len(row)
+        return float(sum((row - mean_value)**2) / length)
+
+    @staticmethod
+    def std(x):
+        """Computes the sample standard deviation"""
+        variance = TinyStatistician.var(x)
+        if variance is None:
+            return None
+        return float(math.sqrt(variance))
 
     @staticmethod
     def validate_input(x):

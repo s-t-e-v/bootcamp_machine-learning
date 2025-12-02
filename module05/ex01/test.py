@@ -234,6 +234,129 @@ def test_percentile():
     
     print()
 
+def test_var():
+    """Test variance function."""
+    print("=== TESTING VARIANCE ===")
+    
+    # Subject example
+    a = [1, 42, 300, 10, 59]
+    result = TinyStatistician.var(a)
+    assert math.isclose(result, 12279.439999999999, rel_tol=EPS), f"Subject variance failed: got {result}"
+    print(f"✓ var({a}) = {result}")
+    
+    # Simple case
+    x1 = [1, 2, 3, 4, 5]
+    result = TinyStatistician.var(x1)
+    # Population variance: mean=3, sum((1-3)^2 + (2-3)^2 + (3-3)^2 + (4-3)^2 + (5-3)^2) / 5 = 10/5 = 2.0
+    assert math.isclose(result, 2.0, rel_tol=EPS), f"Simple variance failed: got {result}"
+    print(f"✓ var([1, 2, 3, 4, 5]) = {result}")
+    
+    # Two elements
+    x2 = [1, 5]
+    result = TinyStatistician.var(x2)
+    # Population variance: mean=3, ((1-3)^2 + (5-3)^2) / 2 = 8/2 = 4.0
+    assert math.isclose(result, 4.0, rel_tol=EPS), f"Two element variance failed: got {result}"
+    print(f"✓ var([1, 5]) = {result}")
+    
+    # Single element (population variance should be 0)
+    x3 = [42]
+    result = TinyStatistician.var(x3)
+    assert math.isclose(result, 0.0, rel_tol=EPS), f"Single element variance failed: got {result}"
+    print(f"✓ var([42]) = {result}")
+    
+    # All same values
+    x4 = [5, 5, 5, 5, 5]
+    result = TinyStatistician.var(x4)
+    assert math.isclose(result, 0.0, rel_tol=EPS), f"Zero variance failed: got {result}"
+    print(f"✓ var([5, 5, 5, 5, 5]) = {result}")
+    
+    # Negative numbers
+    x5 = [-5, -2, 0, 2, 5]
+    result = TinyStatistician.var(x5)
+    # mean=0, var = (25 + 4 + 0 + 4 + 25)/5 = 58/5 = 11.6
+    assert math.isclose(result, 11.6, rel_tol=EPS), f"Negative variance failed: got {result}"
+    print(f"✓ var([-5, -2, 0, 2, 5]) = {result}")
+    
+    # Column vector
+    x6 = np.array([[1], [2], [3], [4], [5]])
+    result = TinyStatistician.var(x6)
+    assert math.isclose(result, 2.0, rel_tol=EPS), f"Column vector variance failed: got {result}"
+    print(f"✓ var(column vector) = {result}")
+    
+    # Edge cases
+    assert TinyStatistician.var([]) is None, "Empty variance should return None"
+    print("✓ var([]) = None")
+    
+    assert TinyStatistician.var(None) is None, "None variance should return None"
+    print("✓ var(None) = None")
+    
+    print()
+
+def test_std():
+    """Test standard deviation function."""
+    print("=== TESTING STANDARD DEVIATION ===")
+    
+    # Subject example
+    a = [1, 42, 300, 10, 59]
+    result = TinyStatistician.std(a)
+    assert math.isclose(result, 110.81263465868862, rel_tol=EPS), f"Subject std failed: got {result}"
+    print(f"✓ std({a}) = {result}")
+    
+    # Simple case
+    x1 = [1, 2, 3, 4, 5]
+    result = TinyStatistician.std(x1)
+    # std = sqrt(2.0) ≈ 1.4142135623730951
+    assert math.isclose(result, math.sqrt(2.0), rel_tol=EPS), f"Simple std failed: got {result}"
+    print(f"✓ std([1, 2, 3, 4, 5]) = {result}")
+    
+    # Two elements
+    x2 = [1, 5]
+    result = TinyStatistician.std(x2)
+    # std = sqrt(4.0) = 2.0
+    assert math.isclose(result, 2.0, rel_tol=EPS), f"Two element std failed: got {result}"
+    print(f"✓ std([1, 5]) = {result}")
+    
+    # Single element (std should be 0)
+    x3 = [42]
+    result = TinyStatistician.std(x3)
+    assert math.isclose(result, 0.0, rel_tol=EPS), f"Single element std failed: got {result}"
+    print(f"✓ std([42]) = {result}")
+    
+    # All same values
+    x4 = [5, 5, 5, 5, 5]
+    result = TinyStatistician.std(x4)
+    assert math.isclose(result, 0.0, rel_tol=EPS), f"Zero std failed: got {result}"
+    print(f"✓ std([5, 5, 5, 5, 5]) = {result}")
+    
+    # Negative numbers
+    x5 = [-5, -2, 0, 2, 5]
+    result = TinyStatistician.std(x5)
+    # std = sqrt(11.6) ≈ 3.4058772731852804
+    assert math.isclose(result, math.sqrt(11.6), rel_tol=EPS), f"Negative std failed: got {result}"
+    print(f"✓ std([-5, -2, 0, 2, 5]) = {result}")
+    
+    # Known std
+    x6 = [2, 4, 4, 4, 5, 5, 7, 9]
+    result = TinyStatistician.std(x6)
+    # mean=5, var = (9+1+1+1+0+0+4+16)/8 = 32/8 = 4, std = 2
+    assert math.isclose(result, 2.0, rel_tol=EPS), f"Known std failed: got {result}"
+    print(f"✓ std([2, 4, 4, 4, 5, 5, 7, 9]) = {result}")
+    
+    # Column vector
+    x7 = np.array([[1], [2], [3], [4], [5]])
+    result = TinyStatistician.std(x7)
+    assert math.isclose(result, math.sqrt(2.0), rel_tol=EPS), f"Column vector std failed: got {result}"
+    print(f"✓ std(column vector) = {result}")
+    
+    # Edge cases
+    assert TinyStatistician.std([]) is None, "Empty std should return None"
+    print("✓ std([]) = None")
+    
+    assert TinyStatistician.std(None) is None, "None std should return None"
+    print("✓ std(None) = None")
+    
+    print()
+
 def test_subject_examples():
     """Test examples from the subject."""
     print("=== TESTING SUBJECT EXAMPLES ===")
@@ -248,6 +371,8 @@ def test_subject_examples():
     print(f"percentile(a, 10) = {tstat.percentile(a, 10)} (expected: 4.6)")
     print(f"percentile(a, 15) = {tstat.percentile(a, 15)} (expected: 6.4)")
     print(f"percentile(a, 20) = {tstat.percentile(a, 20)} (expected: 8.2)")
+    print(f"var(a) = {tstat.var(a)} (expected: 12279.439999999999)")
+    print(f"std(a) = {tstat.std(a)} (expected: 110.81263465868862)")
     
     print()
 
@@ -256,5 +381,7 @@ if __name__ == "__main__":
     test_median()
     test_quartile()
     test_percentile()
+    test_var()
+    test_std()
     test_subject_examples()
     print("✅ All tests passed!")
