@@ -1,5 +1,8 @@
 from TinyStatistician import TinyStatistician
 import numpy as np
+import math
+
+EPS = 1e-9
 
 def test_mean():
     """Test mean function with various inputs."""
@@ -177,6 +180,60 @@ def test_quartile():
     
     print()
 
+def test_percentile():
+    """Test percentile function."""
+    print("=== TESTING PERCENTILE ===")
+    
+    # Basic test
+    x1 = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+    result = TinyStatistician.percentile(x1, 50)
+    assert math.isclose(result, 5.5, rel_tol=EPS), f"50th percentile failed: got {result}"
+    print(f"✓ percentile({x1}, 50) = {result}")
+    
+    # Edge percentiles
+    result = TinyStatistician.percentile(x1, 0)
+    assert math.isclose(result, 1.0, rel_tol=EPS), f"0th percentile failed: got {result}"
+    print(f"✓ percentile({x1}, 0) = {result}")
+    
+    result = TinyStatistician.percentile(x1, 100)
+    assert math.isclose(result, 10.0, rel_tol=EPS), f"100th percentile failed: got {result}"
+    print(f"✓ percentile({x1}, 100) = {result}")
+    
+    # Quartiles via percentile
+    x2 = [1, 42, 300, 10, 59]
+    q1 = TinyStatistician.percentile(x2, 25)
+    q3 = TinyStatistician.percentile(x2, 75)
+    assert math.isclose(q1, 10.0, rel_tol=EPS) and math.isclose(q3, 59.0, rel_tol=EPS), f"Quartile via percentile failed: got Q1={q1}, Q3={q3}"
+    print(f"✓ Q1={q1}, Q3={q3}")
+    
+    # Invalid percentile
+    assert TinyStatistician.percentile(x1, -10) is None, "Negative percentile should fail"
+    assert TinyStatistician.percentile(x1, 110) is None, "Percentile > 100 should fail"
+    assert TinyStatistician.percentile(x1, "50") is None, "String percentile should fail"
+    print("✓ Invalid percentile inputs handled")
+    
+    # Two elements (numpy accepts this)
+    x3 = [1, 10]
+    result = TinyStatistician.percentile(x3, 25)
+    assert math.isclose(result, 3.25, rel_tol=EPS), f"2-element 25th percentile failed: got {result}"
+    print(f"✓ percentile([1, 10], 25) = {result}")
+    
+    # Subject examples
+    a = [1, 42, 300, 10, 59]
+    result = TinyStatistician.percentile(a, 10)
+    assert math.isclose(result, 4.6, rel_tol=EPS), f"10th percentile failed: got {result}"
+    print(f"✓ percentile({a}, 10) = {result}")
+    
+    result = TinyStatistician.percentile(a, 15)
+    assert math.isclose(result, 6.4, rel_tol=EPS), f"15th percentile failed: got {result}"
+    print(f"✓ percentile({a}, 15) = {result}")
+    
+    result = TinyStatistician.percentile(a, 20)
+    assert math.isclose(result, 8.2, rel_tol=EPS), f"20th percentile failed: got {result}"
+    print(f"✓ percentile({a}, 20) = {result}")
+    
+    print()
+
 def test_subject_examples():
     """Test examples from the subject."""
     print("=== TESTING SUBJECT EXAMPLES ===")
@@ -188,6 +245,9 @@ def test_subject_examples():
     print(f"mean(a) = {tstat.mean(a)} (expected: 82.4)")
     print(f"median(a) = {tstat.median(a)} (expected: 42.0)")
     print(f"quartile(a) = {tstat.quartile(a)} (expected: [10.0, 59.0])")
+    print(f"percentile(a, 10) = {tstat.percentile(a, 10)} (expected: 4.6)")
+    print(f"percentile(a, 15) = {tstat.percentile(a, 15)} (expected: 6.4)")
+    print(f"percentile(a, 20) = {tstat.percentile(a, 20)} (expected: 8.2)")
     
     print()
 
@@ -195,5 +255,6 @@ if __name__ == "__main__":
     test_mean()
     test_median()
     test_quartile()
+    test_percentile()
     test_subject_examples()
     print("✅ All tests passed!")
